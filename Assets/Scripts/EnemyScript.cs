@@ -8,8 +8,7 @@ public class NewBehaviourScript : MonoBehaviour
     
     private Collider collider;
     private CubicBezier bz;
-    private Vector3[] path;
-    private int currI;
+    private QuadBezier bz2;
 
     private void Awake() {
         collider = GetComponent<Collider>();
@@ -19,6 +18,12 @@ public class NewBehaviourScript : MonoBehaviour
             new Vector3(0, 1, 5),
             new Vector3(5, 2, 0),
             new Vector3(5, 3, 5)
+        );
+
+        bz2 = new(
+            new Vector3(0, 0, 0),
+            new Vector3(0, 0, 8),
+            new Vector3(10, 0, 0)
         );
     }
 
@@ -30,6 +35,7 @@ public class NewBehaviourScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = bz.MoveAlongCurve(speed * Time.deltaTime, transform.position);
+        //transform.position = bz.MoveAlongCurve(speed * Time.deltaTime);
+        transform.position = bz2.MoveAlongCurve(speed * Time.deltaTime);
     }
 }

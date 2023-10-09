@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Bezier
@@ -28,7 +26,7 @@ public abstract class Bezier
     }
 
     protected abstract void ComputeCoeffs();
-    public abstract Vector3 ReturnPos(float t);
+    protected abstract Vector3 ReturnPos(float t);
 
     protected void ComputeEndpoints() {
         float currT = 0;
