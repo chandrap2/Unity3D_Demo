@@ -6,17 +6,19 @@ public class NewBehaviourScript : MonoBehaviour
 {
     [SerializeField] private float speed;
     
-    private Collider collider;
-    private CubicBezier bz;
+    //private Collider collider;
+    private CubicBezier bz3;
     private QuadBezier bz2;
 
-    private void Awake() {
-        collider = GetComponent<Collider>();
+    int dir = 1;
 
-        bz = new(
+    private void Awake() {
+        //collider = GetComponent<Collider>();
+
+        bz3 = new(
             new Vector3(0, 0, 0),
-            new Vector3(0, 1, 5),
-            new Vector3(5, 2, 0),
+            new Vector3(0, 2, 5),
+            new Vector3(5, -1, 0),
             new Vector3(5, 3, 5)
         );
 
@@ -36,6 +38,9 @@ public class NewBehaviourScript : MonoBehaviour
     void Update()
     {
         //transform.position = bz.MoveAlongCurve(speed * Time.deltaTime);
-        transform.position = bz2.MoveAlongCurve(speed * Time.deltaTime);
+        transform.position = bz3.MoveAlongCurve(dir * speed * Time.deltaTime);
+
+        if (bz3.currTravelState != Bezier.TRAVEL_STATE.TRAVELLED)
+            dir *= -1;
     }
 }

@@ -6,6 +6,7 @@ public abstract class Bezier
     public enum TRAVEL_STATE {
         HIT_START, TRAVELLED, HIT_END
     };
+    public TRAVEL_STATE currTravelState = TRAVEL_STATE.HIT_START;
 
     protected const int NUM_SEGMENTS = 200;
 
@@ -47,6 +48,20 @@ public abstract class Bezier
     public Vector3 MoveAlongCurve(float dist) {
         float targetDist = dist + currDist;
 
+        if (targetDist < 0 || targetDist > cumulArcLength[NUM_SEGMENTS]) {
+            if (targetDist < 0) {
+                currTravelState = TRAVEL_STATE.HIT_START;
+                currDist = 0;
+                currSegment = 0;
+                return segmentEndpoints[0];
+            }
+
+            currTravelState = TRAVEL_STATE.HIT_END;
+            currDist = cumulArcLength[NUM_SEGMENTS];
+            currSegment = NUM_SEGMENTS - 1;
+            return segmentEndpoints[NUM_SEGMENTS];
+        }
+
         int segmentIndex;
         if (dist > 0) {
             segmentIndex = ~Array.BinarySearch(cumulArcLength, currSegment, cumulArcLength.Length - currSegment, targetDist) - 1;
@@ -57,14 +72,11 @@ public abstract class Bezier
         segmentIndex = Math.Clamp(segmentIndex, 0, NUM_SEGMENTS);
 
         Vector3 finalPos;
-        if (segmentIndex == 0 || segmentIndex == NUM_SEGMENTS) {
-            finalPos = segmentEndpoints[segmentIndex];
-            currDist = cumulArcLength[segmentIndex];
-        } else {
-            float tAlongSegment = (targetDist - cumulArcLength[segmentIndex]) / (cumulArcLength[segmentIndex + 1] - cumulArcLength[segmentIndex]);
-            finalPos = (segmentEndpoints[segmentIndex] * (1 - tAlongSegment)) + (segmentEndpoints[segmentIndex + 1] * tAlongSegment);
-            currDist = targetDist;
-        }
+        float tAlongSegment = (targetDist - cumulArcLength[segmentIndex]) / (cumulArcLength[segmentIndex + 1] - cumulArcLength[segmentIndex]);
+        finalPos = (segmentEndpoints[segmentIndex] * (1 - tAlongSegment)) + (segmentEndpoints[segmentIndex + 1] * tAlongSegment);
+        currDist = targetDist;
+
+        currTravelState = TRAVEL_STATE.TRAVELLED;
 
         currSegment = segmentIndex;
         return finalPos;
